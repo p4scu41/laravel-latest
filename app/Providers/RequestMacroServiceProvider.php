@@ -15,7 +15,7 @@ class RequestMacroServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Request::macro('isApiRoute', static function () {
+        Request::macro('isApiRoute', function () {
             return Str::startsWith(request()->path(), 'api/');
         });
     }
