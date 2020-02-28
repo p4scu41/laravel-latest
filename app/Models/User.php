@@ -11,6 +11,7 @@ use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailContract;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 
 class User extends BaseModel implements
     AuthenticatableContract,
@@ -48,8 +49,24 @@ class User extends BaseModel implements
     ];
 
     public $validation_rules = [
-        'name'     => 'required|min:8',
-        'email'    => 'required|email:rfc,dns|unique:users',
-        'password' => 'required|min:8',
+        'name'     => 'required|string|min:2|max:100',
+        'email'    => 'required|string|max:100|email:rfc,dns|unique:users',
+        'password' => 'required|string|min:8|max:100',
     ];
+
+    /**
+     * The "booting" method of the model.
+     *
+     * @return void
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saving(function ($user) {
+            if ($user->isDirty('password')) {
+                $user->password = Hash::make($user->password);
+            }
+        });
+    }
 }
