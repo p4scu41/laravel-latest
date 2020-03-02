@@ -45,6 +45,7 @@ return [
             'driver' => 'single',
             'path' => storage_path('logs/laravel.log'),
             'level' => 'debug',
+            'tap' => [App\Exceptions\CustomizeFormatter::class],
         ],
 
         'daily' => [
@@ -102,6 +103,7 @@ return [
 
         'sentry' => [
             'driver' => 'sentry',
+            'tap' => [App\Exceptions\CustomizeFormatter::class],
         ],
     ],
 
