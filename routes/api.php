@@ -18,4 +18,15 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::apiResource('users', 'UserController');
+Route::apiResource('users', 'Api\UserController')
+    ->only(['store'])
+    ->middleware('throttle:3,1')
+    ->names(['store' => 'api.users.store']);
+
+Route::namespace('Api')
+    ->name('api.')
+    ->middleware('throttle:60,1')
+    ->group(function () {
+        Route::apiResource('users', 'UserController')
+            ->except(['store']);
+    });
