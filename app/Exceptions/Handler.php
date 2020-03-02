@@ -10,6 +10,7 @@ use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Session\TokenMismatchException;
 use Illuminate\Support\Facades\Auth;
@@ -171,7 +172,7 @@ class Handler extends ExceptionHandler
             return $this->convertValidationExceptionToResponse($e, $request);
         }
 
-        return $request->expectsJson() || $request->isApiRoute()
+        return $request->expectsJson() || (Request::hasMacro('isApiRoute') && $request->isApiRoute())
                         ? $this->prepareJsonResponse($request, $e)
                         : $this->prepareResponse($request, $e);
     }
@@ -206,7 +207,7 @@ class Handler extends ExceptionHandler
      */
     protected function unauthenticated($request, AuthenticationException $exception)
     {
-        return $request->expectsJson() || $request->isApiRoute()
+        return $request->expectsJson() || (Request::hasMacro('isApiRoute') && $request->isApiRoute())
                     ? response()->json(['message' => $exception->getMessage()], 401)
                     : redirect()->guest(route('login'));
     }
@@ -224,7 +225,7 @@ class Handler extends ExceptionHandler
             return $e->response;
         }
 
-        return $request->expectsJson() || $request->isApiRoute()
+        return $request->expectsJson() || (Request::hasMacro('isApiRoute') && $request->isApiRoute())
                     ? $this->invalidJson($request, $e)
                     : $this->invalid($request, $e);
     }
@@ -324,8 +325,11 @@ class Handler extends ExceptionHandler
         if (php_sapi_name() != 'cli') {
             $parsed['tags']['user_agent']     = $context['user_agent'];
             $parsed['tags']['request_method'] = $context['request_method'];
-            $parsed['tags']['route']          = request()->route()->uri;
             $user['ip_address']               = $context['request_ip'];
+
+            if (! empty(request()->route())) {
+                $parsed['tags']['route'] = request()->route()->uri;
+            }
         }
 
         if (!empty($user)) {
@@ -344,6 +348,6 @@ class Handler extends ExceptionHandler
             $parsed['extra']['request_data'] = $context['request_data'];
         }
 
-        return $parsed;
+        return array_filter($parsed);
     }
 }
