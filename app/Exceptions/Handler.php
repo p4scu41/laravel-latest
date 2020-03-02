@@ -66,12 +66,18 @@ class Handler extends ExceptionHandler
             throw $e;
         }
 
+        $context = array_merge(
+            $this->exceptionContext($e),
+            $this->context()
+        );
+
+        if (app()->bound('sentry')) {
+            $context = $this->parseForSentry($e, $context);
+        }
+
         $logger->error(
             $e->getMessage(),
-            array_merge(
-                $this->exceptionContext($e),
-                $this->context()
-            )
+            $context
         );
     }
 
@@ -101,15 +107,9 @@ class Handler extends ExceptionHandler
         try {
             $start_time = Carbon::createFromTimestamp(LARAVEL_START);
             $context = [
-                'time_elapsed'         => now()->shortAbsoluteDiffForHumans($start_time, 3),
-                'seconds_elapsed'      => now()->floatDiffInSeconds($start_time),
-                'memory_peak_usage_mb' => memory_get_peak_usage() / 1024 / 1024,
-                'php_sapi_name'        => php_sapi_name(),
-                'user_process'         => (
-                        function_exists('posix_getpwuid') ?
-                        posix_getpwuid(posix_geteuid())['name'] : // Linux
-                        getenv('USERNAME') // Windows
-                    ),
+                'time_elapsed'    => now()->shortAbsoluteDiffForHumans($start_time, 3),
+                'seconds_elapsed' => now()->floatDiffInSeconds($start_time),
+                'memory_usage_mb' => memory_get_peak_usage() / 1024 / 1024,
             ];
 
             if (Auth::check()) {
@@ -117,11 +117,11 @@ class Handler extends ExceptionHandler
                 $context['user_email'] = Auth::user()->email;
             }
 
-            if ($context['php_sapi_name'] == 'cli') {
+            if (php_sapi_name() == 'cli') {
                 $context['cmd_console'] = $this->getCommandFromConsole();
             }
 
-            if ($context['php_sapi_name'] != 'cli') {
+            if (php_sapi_name() != 'cli') {
                 $context['user_agent']     = request()->header('user-agent');
                 $context['request_method'] = request()->method();
                 $context['request_url']    = request()->fullUrl();
@@ -292,5 +292,58 @@ class Handler extends ExceptionHandler
 
         // Only get lines that not contains vendor/
         return array_values(preg_grep('/vendor\//i', $lines, PREG_GREP_INVERT));
+    }
+
+    /**
+     * @param \Throwable $exception
+     * @param array $context
+     *
+     * @return array
+     */
+    public function parseForSentry($exception, $context)
+    {
+        $parsed = [
+            'exception' => $exception,
+            'extra' => [
+                'time_elapsed'    => $context['time_elapsed'],
+                'seconds_elapsed' => $context['seconds_elapsed'],
+                'memory_usage_mb' => $context['memory_usage_mb'],
+                'exception'       => $context['exception'],
+                'file'            => $context['file'],
+                'trace'           => $context['trace'],
+            ],
+            'tags' => [],
+        ];
+        $user = [];
+
+        if (Auth::check()) {
+            $user['id'] = $context['user_id'];
+            $user['email'] = $context['user_email'];
+        }
+
+        if (php_sapi_name() != 'cli') {
+            $parsed['tags']['user_agent']     = $context['user_agent'];
+            $parsed['tags']['request_method'] = $context['request_method'];
+            $parsed['tags']['route']          = request()->route()->uri;
+            $user['ip_address']               = $context['request_ip'];
+        }
+
+        if (!empty($user)) {
+            $parsed['user'] = $user;
+        }
+
+        if (isset($context['cmd_console'])) {
+            $parsed['tags']['cmd_console'] = $context['cmd_console'];
+        }
+
+        if (isset($context['previous_url'])) {
+            $parsed['extra']['previous_url'] = $context['previous_url'];
+        }
+
+        if (isset($context['request_data'])) {
+            $parsed['extra']['request_data'] = $context['request_data'];
+        }
+
+        return $parsed;
     }
 }
