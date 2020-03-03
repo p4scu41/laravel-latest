@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,19 +13,27 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::post('auth/login', 'Api\JwtAuthController@login')
+    ->middleware('throttle:5,1')
+    ->name('api.auth.login');
+
+Route::prefix('auth')
+    ->middleware('jwt.auth', 'throttle:5,1')
+    ->name('auth.')
+    ->group(function () {
+        Route::post('logout', 'Api\JwtAuthController@logout')->name('logout');
+        Route::post('refresh', 'Api\JwtAuthController@refresh')->name('refresh');
+        Route::post('me', 'Api\JwtAuthController@me')->name('me');
+    });
 
 Route::apiResource('users', 'Api\UserController')
     ->only(['store'])
     ->middleware('throttle:3,1')
     ->names(['store' => 'api.users.store']);
 
-Route::namespace('Api')
-    ->name('api.')
-    ->middleware('throttle:60,1')
+Route::name('api.')
+    ->middleware('jwt.auth')
     ->group(function () {
-        Route::apiResource('users', 'UserController')
+        Route::apiResource('users', 'Api\UserController')
             ->except(['store']);
     });

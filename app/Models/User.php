@@ -12,11 +12,13 @@ use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailContract;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends BaseModel implements
     AuthenticatableContract,
     AuthorizableContract,
     CanResetPasswordContract,
+    JWTSubject,
     MustVerifyEmailContract
 {
     use Authenticatable, Authorizable, CanResetPassword, MustVerifyEmail, Notifiable;
@@ -68,5 +70,25 @@ class User extends BaseModel implements
                 $user->password = Hash::make($user->password);
             }
         });
+    }
+
+    /**
+     * Get the identifier that will be stored in the subject claim of the JWT.
+     *
+     * @return mixed
+     */
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        return [];
     }
 }
