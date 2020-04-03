@@ -13,6 +13,7 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Session\TokenMismatchException;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Psr\Log\LoggerInterface;
@@ -72,7 +73,7 @@ class Handler extends ExceptionHandler
             $this->context()
         );
 
-        if (app()->bound('sentry')) {
+        if (app()->bound('sentry') && !App::environment('testing')) {
             $context = $this->parseForSentry($e, $context);
         }
 
