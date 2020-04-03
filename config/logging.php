@@ -103,6 +103,7 @@ return [
 
         'sentry' => [
             'driver' => 'sentry',
+            'level' => 'info',
             'tap' => [App\Exceptions\CustomizeFormatter::class],
         ],
     ],
