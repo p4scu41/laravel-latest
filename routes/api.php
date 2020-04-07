@@ -13,16 +13,23 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/status', function () {
+    return 'OK';
+});
+
 Route::post('auth/login', 'Api\JwtAuthController@login')
     ->middleware('throttle:5,1')
     ->name('api.auth.login');
+
+Route::post('auth/refresh', 'Api\JwtAuthController@refresh')
+    ->middleware('throttle:5,1')
+    ->name('api.auth.refresh');
 
 Route::prefix('auth')
     ->middleware('jwt.auth', 'throttle:5,1')
     ->name('auth.')
     ->group(function () {
         Route::post('logout', 'Api\JwtAuthController@logout')->name('logout');
-        Route::post('refresh', 'Api\JwtAuthController@refresh')->name('refresh');
         Route::post('me', 'Api\JwtAuthController@me')->name('me');
     });
 
