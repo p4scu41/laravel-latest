@@ -141,6 +141,11 @@ class Handler extends ExceptionHandler
 
             return $context;
         } catch (Throwable $e) {
+            error_log(
+                $e->getMessage() . PHP_EOL .
+                $e->getTraceAsString()
+            );
+
             return [];
         }
     }
