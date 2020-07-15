@@ -12,6 +12,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailContract;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Activitylog\Traits\CausesActivity;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends BaseModel implements
@@ -21,7 +22,12 @@ class User extends BaseModel implements
     JWTSubject,
     MustVerifyEmailContract
 {
-    use Authenticatable, Authorizable, CanResetPassword, MustVerifyEmail, Notifiable;
+    use Authenticatable,
+        Authorizable,
+        CanResetPassword,
+        CausesActivity,
+        MustVerifyEmail,
+        Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -54,6 +60,13 @@ class User extends BaseModel implements
         'name'     => 'required|string|min:2|max:100',
         'email'    => 'required|string|max:100|email:rfc,dns|unique:users',
         'password' => 'required|string|min:8|max:100',
+    ];
+
+    protected static $logAttributesToIgnore = [
+        'password',
+        'remember_token',
+        'created_at',
+        'updated_at',
     ];
 
     /**
