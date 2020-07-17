@@ -16,6 +16,7 @@
         "laravel/tinker": "^2.0",
         "sentry/sentry-laravel": "1.7.0",
         "spatie/laravel-activitylog": "^3.14",
+        "spatie/laravel-query-builder": "^2.8",
         "tymon/jwt-auth": "dev-develop"
     },
     "require-dev": {
