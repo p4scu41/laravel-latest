@@ -23,6 +23,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        $activityLogCls = config('activitylog.activity_model');
+
+        $activityLogCls::saving(function ($activity) {
+            $activity->properties = $activity->properties->put('ip', request()->ip());
+            $activity->properties = $activity->properties->put('agent', request()->userAgent());
+        });
     }
 }
