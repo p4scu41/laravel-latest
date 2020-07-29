@@ -15,6 +15,7 @@ use Illuminate\Session\TokenMismatchException;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use Inspector\Laravel\Facades\Inspector;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -75,6 +76,8 @@ class Handler extends ExceptionHandler
         if (app()->bound('sentry') && !App::environment('testing')) {
             $context = $this->parseForSentry($e, $context);
         }
+
+        Inspector::reportException($e);
 
         $logger->error(
             $e->getMessage(),
