@@ -44,3 +44,6 @@ Route::name('api.')
         Route::apiResource('users', 'Api\UserController')
             ->except(['store']);
     });
+
+Route::apiResource('activitylogs', 'Api\ActivityLogController')
+    ->only(['index', 'show']);

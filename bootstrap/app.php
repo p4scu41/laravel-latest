@@ -1,5 +1,13 @@
 <?php
 
+ini_set(
+    'error_log',
+    dirname(__DIR__) .
+    DIRECTORY_SEPARATOR . 'storage' .
+    DIRECTORY_SEPARATOR . 'logs' .
+    DIRECTORY_SEPARATOR . 'laravel.log'
+);
+
 /*
 |--------------------------------------------------------------------------
 | Create The Application
