@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use App\Traits\ModelValidation;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 class BaseModel extends Model
 {
-    use LogsActivity, ModelValidation;
+    use HasFactory, LogsActivity, ModelValidation;
 
     protected static $logAttributes = ['*'];
 

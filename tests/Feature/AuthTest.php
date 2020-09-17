@@ -41,7 +41,9 @@ class AuthTest extends TestCase
      */
     public function test_it_can_login()
     {
-        $this->user = factory(User::class)->create();
+        // $this->withoutExceptionHandling();
+
+        $this->user = User::factory()->create();
 
         $response = $this->postJson(
             '/api/auth/login',

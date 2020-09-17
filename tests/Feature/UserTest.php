@@ -47,7 +47,7 @@ class UserTest extends TestCase
      */
     public function test_it_can_update_a_user()
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $updated_data = array_merge($user->toArray(), ['name' => 'Updated name']);
 
         $this->getToken();
@@ -71,7 +71,7 @@ class UserTest extends TestCase
      */
     public function test_it_can_delete_a_user()
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         $this->getToken();
 
@@ -86,7 +86,7 @@ class UserTest extends TestCase
      */
     public function getToken()
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         $response = $this->postJson(
             '/api/auth/login',

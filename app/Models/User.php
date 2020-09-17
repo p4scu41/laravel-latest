@@ -58,7 +58,7 @@ class User extends BaseModel implements
 
     public $validation_rules = [
         'name'     => 'required|string|min:2|max:100',
-        'email'    => 'required|string|max:100|email:rfc,dns|unique:users',
+        'email'    => 'required|string|max:100|email|unique:users',
         'password' => 'required|string|min:8|max:100',
     ];
 

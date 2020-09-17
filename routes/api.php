@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\ActivityLogController;
+use App\Http\Controllers\Api\JwtAuthController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,11 +20,11 @@ Route::get('/status', function () {
     return 'OK';
 });
 
-Route::post('auth/login', 'Api\JwtAuthController@login')
+Route::post('auth/login', [JwtAuthController::class, 'login'])
     ->middleware('throttle:5,1')
     ->name('api.auth.login');
 
-Route::post('auth/refresh', 'Api\JwtAuthController@refresh')
+Route::post('auth/refresh', [JwtAuthController::class, 'refresh'])
     ->middleware('throttle:5,1')
     ->name('api.auth.refresh');
 
@@ -29,11 +32,11 @@ Route::prefix('auth')
     ->middleware('jwt.auth', 'throttle:5,1')
     ->name('auth.')
     ->group(function () {
-        Route::post('logout', 'Api\JwtAuthController@logout')->name('logout');
-        Route::post('me', 'Api\JwtAuthController@me')->name('me');
+        Route::post('logout', [JwtAuthController::class, 'logout'])->name('logout');
+        Route::post('me', [JwtAuthController::class, 'me'])->name('me');
     });
 
-Route::apiResource('users', 'Api\UserController')
+Route::apiResource('users', UserController::class)
     ->only(['store'])
     ->middleware('throttle:3,1')
     ->names(['store' => 'api.users.store']);
@@ -41,9 +44,9 @@ Route::apiResource('users', 'Api\UserController')
 Route::name('api.')
     ->middleware('jwt.auth')
     ->group(function () {
-        Route::apiResource('users', 'Api\UserController')
+        Route::apiResource('users', UserController::class)
             ->except(['store']);
     });
 
-Route::apiResource('activitylogs', 'Api\ActivityLogController')
+Route::apiResource('activitylogs', ActivityLogController::class)
     ->only(['index', 'show']);

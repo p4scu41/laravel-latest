@@ -54,12 +54,24 @@ class Handler extends ExceptionHandler
      */
     public function report(Throwable $e)
     {
+        $e = $this->mapException($e);
+
         if ($this->shouldntReport($e)) {
             return;
         }
 
         if (is_callable($reportCallable = [$e, 'report'])) {
-            return $this->container->call($reportCallable);
+            if ($this->container->call($reportCallable) !== false) {
+                return;
+            }
+        }
+
+        foreach ($this->reportCallbacks as $reportCallback) {
+            if ($reportCallback->handles($e)) {
+                if ($reportCallback($e) === false) {
+                    return;
+                }
+            }
         }
 
         try {
@@ -171,7 +183,16 @@ class Handler extends ExceptionHandler
             return $e->toResponse($request);
         }
 
-        $e = $this->prepareException($e);
+        $e = $this->prepareException($this->mapException($e));
+
+        foreach ($this->renderCallbacks as $renderCallback) {
+            if (is_a($e, $this->firstClosureParameterType($renderCallback))) {
+                $response = $renderCallback($e, $request);
+                if (! is_null($response)) {
+                    return $response;
+                }
+            }
+        }
 
         if ($e instanceof HttpResponseException) {
             return $e->getResponse();

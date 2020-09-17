@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\UtilController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,6 +19,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('utils/commands', 'UtilController@commands')->name('utils.commands');
+Route::get('utils/commands', [UtilController::class, 'commands'])->name('utils.commands');
 
-Route::get('activitylogs', 'ActivityLogController@index');
+Route::get('activitylogs', [ActivityLogController::class, 'index']);
