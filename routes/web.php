@@ -21,4 +21,4 @@ Route::get('/', function () {
 
 Route::get('utils/commands', [UtilController::class, 'commands'])->name('utils.commands');
 
-Route::get('activitylogs', [ActivityLogController::class, 'index']);
+Route::get('activitylogs', [ActivityLogController::class, 'index'])->name('activitylogs.index');
