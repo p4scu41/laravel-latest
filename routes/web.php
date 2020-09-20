@@ -22,3 +22,7 @@ Route::get('/', function () {
 Route::get('utils/commands', [UtilController::class, 'commands'])->name('utils.commands');
 
 Route::get('activitylogs', [ActivityLogController::class, 'index'])->name('activitylogs.index');
+
+Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
+    return Inertia\Inertia::render('Dashboard');
+})->name('dashboard');

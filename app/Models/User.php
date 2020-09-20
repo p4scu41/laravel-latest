@@ -12,22 +12,26 @@ use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailContract;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Fortify\TwoFactorAuthenticatable;
+use Laravel\Jetstream\HasProfilePhoto;
+use Laravel\Sanctum\HasApiTokens;
 use Spatie\Activitylog\Traits\CausesActivity;
-use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends BaseModel implements
     AuthenticatableContract,
     AuthorizableContract,
-    CanResetPasswordContract,
-    JWTSubject,
-    MustVerifyEmailContract
+    CanResetPasswordContract
 {
     use Authenticatable,
         Authorizable,
         CanResetPassword,
         CausesActivity,
+        HasApiTokens,
+        HasProfilePhoto,
         MustVerifyEmail,
-        Notifiable;
+        Notifiable,
+        TwoFactorAuthenticatable;
+
 
     /**
      * The attributes that are mass assignable.
@@ -35,7 +39,9 @@ class User extends BaseModel implements
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name',
+        'email',
+        'password',
     ];
 
     /**
@@ -44,7 +50,10 @@ class User extends BaseModel implements
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password',
+        'remember_token',
+        'two_factor_recovery_codes',
+        'two_factor_secret',
     ];
 
     /**
@@ -55,6 +64,16 @@ class User extends BaseModel implements
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = [
+        'profile_photo_url',
+    ];
+
 
     public $validation_rules = [
         'name'     => 'required|string|min:2|max:100',
