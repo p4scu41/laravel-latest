@@ -5,7 +5,7 @@ ini_set(
     dirname(__DIR__) .
     DIRECTORY_SEPARATOR . 'storage' .
     DIRECTORY_SEPARATOR . 'logs' .
-    DIRECTORY_SEPARATOR . 'laravel_' . date('Y-m-d') . '.log'
+    DIRECTORY_SEPARATOR . 'laravel-' . date('Y-m-d') . '.log'
 );
 
 /*

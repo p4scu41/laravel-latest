@@ -11,7 +11,6 @@ use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailContract;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Hash;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
@@ -20,7 +19,8 @@ use Spatie\Activitylog\Traits\CausesActivity;
 class User extends BaseModel implements
     AuthenticatableContract,
     AuthorizableContract,
-    CanResetPasswordContract
+    CanResetPasswordContract,
+    MustVerifyEmailContract
 {
     use Authenticatable,
         Authorizable,
@@ -87,22 +87,6 @@ class User extends BaseModel implements
         'created_at',
         'updated_at',
     ];
-
-    /**
-     * The "booting" method of the model.
-     *
-     * @return void
-     */
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::saving(function ($user) {
-            if ($user->isDirty('password')) {
-                $user->password = Hash::make($user->password);
-            }
-        });
-    }
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
