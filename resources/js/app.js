@@ -2,9 +2,9 @@ require('./bootstrap');
 
 import Vue from 'vue';
 import VueMeta from 'vue-meta';
-import PortalVue from 'portal-vue';
 import { InertiaApp } from '@inertiajs/inertia-vue';
 import { InertiaForm } from 'laravel-jetstream';
+import PortalVue from 'portal-vue';
 
 Vue.config.productionTip = false;
 Vue.mixin({methods: {route: window.route}});
