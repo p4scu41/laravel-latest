@@ -124,8 +124,8 @@ class Handler extends ExceptionHandler
             $start_time = Carbon::createFromTimestamp(LARAVEL_START);
             $context = [
                 'time_elapsed'    => now()->shortAbsoluteDiffForHumans($start_time, 3),
-                'seconds_elapsed' => now()->floatDiffInSeconds($start_time),
-                'memory_usage_mb' => memory_get_peak_usage() / 1024 / 1024,
+                'seconds_elapsed' => round(now()->floatDiffInSeconds($start_time), 2),
+                'memory_usage_mb' => round(memory_get_peak_usage() / 1024 / 1024, 2),
             ];
 
             if (Auth::check()) {
