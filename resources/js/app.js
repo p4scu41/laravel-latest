@@ -5,12 +5,19 @@ import VueMeta from 'vue-meta';
 import { InertiaApp } from '@inertiajs/inertia-vue';
 import { InertiaForm } from 'laravel-jetstream';
 import PortalVue from 'portal-vue';
+import route from 'ziggy';
+import { Ziggy } from '../assets/js/ziggy';
 
 Vue.config.productionTip = false;
-Vue.mixin({methods: {route: window.route}});
 Vue.use(InertiaApp);
 Vue.use(InertiaForm);
 Vue.use(PortalVue);
+
+Vue.mixin({
+    methods: {
+        route: (name, params, absolute) => route(name, params, absolute, Ziggy),
+    },
+});
 
 const app = document.getElementById('app');
 
