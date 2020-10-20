@@ -19,8 +19,8 @@ use Spatie\Activitylog\Traits\CausesActivity;
 class User extends BaseModel implements
     AuthenticatableContract,
     AuthorizableContract,
-    CanResetPasswordContract,
-    MustVerifyEmailContract
+    CanResetPasswordContract//,
+    //MustVerifyEmailContract
 {
     use Authenticatable,
         Authorizable,
@@ -28,7 +28,7 @@ class User extends BaseModel implements
         CausesActivity,
         HasApiTokens,
         HasProfilePhoto,
-        MustVerifyEmail,
+        //MustVerifyEmail,
         Notifiable,
         TwoFactorAuthenticatable;
 

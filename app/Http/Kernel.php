@@ -38,6 +38,7 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \Inspector\Laravel\Middleware\WebRequestMonitoring::class,
+            \App\Http\Middleware\HandleInertiaRequests::class,
         ],
 
         'api' => [
