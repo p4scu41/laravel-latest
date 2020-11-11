@@ -7,7 +7,6 @@ import { InertiaForm } from 'laravel-jetstream';
 import PortalVue from 'portal-vue';
 import { InertiaProgress } from '@inertiajs/progress'
 
-Vue.config.productionTip = false;
 Vue.mixin({ methods: { route } });
 Vue.use(InertiaApp);
 Vue.use(InertiaForm);
