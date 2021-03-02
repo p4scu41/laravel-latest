@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\UtilController;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,7 +18,12 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return Inertia::render('Welcome', [
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+        'laravelVersion' => Application::VERSION,
+        'phpVersion' => PHP_VERSION,
+    ]);
 });
 
 Route::get('utils/commands', [UtilController::class, 'commands'])->name('utils.commands');
@@ -24,5 +31,5 @@ Route::get('utils/commands', [UtilController::class, 'commands'])->name('utils.c
 Route::get('activitylogs', [ActivityLogController::class, 'index'])->name('activitylogs.index');
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
-    return Inertia\Inertia::render('Dashboard');
+    return Inertia::render('Dashboard');
 })->name('dashboard');
