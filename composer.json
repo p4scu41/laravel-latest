@@ -15,7 +15,7 @@
         "inertiajs/inertia-laravel": "^0.3.5",
         "inspector-apm/inspector-laravel": "^4.5.1",
         "laravel/framework": "^8.12",
-        "laravel/jetstream": "^2.2",
+        "laravel/jetstream": "^2.3",
         "laravel/sanctum": "^2.6",
         "laravel/tinker": "^2.5",
         "sentry/sentry-laravel": "1.9.0",
