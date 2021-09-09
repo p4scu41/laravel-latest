@@ -40,4 +40,17 @@ class Kernel extends ConsoleKernel
 
         require base_path('routes/console.php');
     }
+
+    /**
+     * Get the bootstrap classes for the application.
+     *
+     * @return array
+     */
+    protected function bootstrappers()
+    {
+        return array_merge(
+            [\Inspector\Laravel\OutOfMemoryBootstrapper::class],
+            parent::bootstrappers()
+        );
+    }
 }

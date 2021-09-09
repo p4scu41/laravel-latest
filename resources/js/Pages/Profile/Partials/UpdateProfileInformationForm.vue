@@ -25,8 +25,8 @@
 
                 <!-- New Profile Photo Preview -->
                 <div class="mt-2" v-show="photoPreview">
-                    <span class="block rounded-full w-20 h-20"
-                          :style="'background-size: cover; background-repeat: no-repeat; background-position: center center; background-image: url(\'' + photoPreview + '\');'">
+                    <span class="block rounded-full w-20 h-20 bg-cover bg-no-repeat bg-center"
+                          :style="'background-image: url(\'' + photoPreview + '\');'">
                     </span>
                 </div>
 
@@ -69,15 +69,16 @@
 </template>
 
 <script>
-    import JetButton from '@/Jetstream/Button'
-    import JetFormSection from '@/Jetstream/FormSection'
-    import JetInput from '@/Jetstream/Input'
-    import JetInputError from '@/Jetstream/InputError'
-    import JetLabel from '@/Jetstream/Label'
-    import JetActionMessage from '@/Jetstream/ActionMessage'
-    import JetSecondaryButton from '@/Jetstream/SecondaryButton'
+    import { defineComponent } from 'vue'
+    import JetButton from '@/Jetstream/Button.vue'
+    import JetFormSection from '@/Jetstream/FormSection.vue'
+    import JetInput from '@/Jetstream/Input.vue'
+    import JetInputError from '@/Jetstream/InputError.vue'
+    import JetLabel from '@/Jetstream/Label.vue'
+    import JetActionMessage from '@/Jetstream/ActionMessage.vue'
+    import JetSecondaryButton from '@/Jetstream/SecondaryButton.vue'
 
-    export default {
+    export default defineComponent({
         components: {
             JetActionMessage,
             JetButton,
@@ -150,5 +151,5 @@
                 }
             },
         },
-    }
+    })
 </script>
